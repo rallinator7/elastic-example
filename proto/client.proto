@@ -1,0 +1,47 @@
+syntax = "proto3";
+package client;
+
+option go_package= "./../internal/client";
+
+message Client{
+    string id = 1;
+    string name = 2;
+    string city = 3;
+    string state = 4;
+    string country = 5;
+}
+
+message CreateRequest {
+    string firstName = 1;
+    string lastName = 2;
+    string city = 3;
+    string state = 4;
+    string country = 5;
+}
+
+message CreateResponse {
+    repeated Client client = 1;
+}
+
+message NameSearchRequest {
+    string name = 1;
+}
+
+message NameSearchResponse {
+    string id = 1;
+    string name = 2;
+}
+
+message GetRequest {
+    string id = 1;
+}
+
+message GetResponse {
+    Client client = 1;
+}
+
+service ClientService {
+    rpc Create(CreateRequest) returns (CreateResponse) {}
+    rpc NameSearch(NameSearchRequest) returns (NameSearchResponse) {}
+    rpc Get(GetRequest) returns (GetResponse) {}
+}

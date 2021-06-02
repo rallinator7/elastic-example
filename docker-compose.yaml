@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  client:
+    image: proto-client
+    environment:
+      - SERVER_PORT=9000
+      - SERVER_HOST=server
+    networks:
+      - proto
+  server:
+    image: proto-server
+    environment:
+      - PORT=9000
+    networks:
+      - proto
+networks:
+  proto:

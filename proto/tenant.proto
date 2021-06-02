@@ -1,0 +1,38 @@
+syntax = "proto3";
+package tenant;
+
+option go_package= "./../internal/tenant";
+
+message Tenant{
+    string name = 1;
+    string id = 2;
+}
+
+message CreateRequest {
+    string name = 1;
+}
+
+message CreateResponse {
+    Tenant tenant = 1;
+}
+
+message GetAllRequest {}
+
+message GetAllResponse {
+    repeated Tenant tenant = 1;
+}
+
+message NameSearchRequest {
+    string name = 1;
+}
+
+message NameSearchResponse {
+    string id = 1;
+    string name = 2;
+}
+
+service TenantService {
+    rpc Create(CreateRequest) returns (CreateResponse) {}
+    rpc GetAll(GetAllRequest) returns (GetAllResponse) {}
+    rpc NameSearch(NameSearchRequest) returns (NameSearchResponse) {}
+}
