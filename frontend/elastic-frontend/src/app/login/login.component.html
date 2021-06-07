@@ -1,22 +1,9 @@
-<div class="login">
-<div class="example-viewport" layout-align="center center">
-    <div class="login-header">
-        <h2>Welcome!</h2>
-        <p>select which tenant you would like to manage or create a new one</p>
-    </div>
-    <cdk-virtual-scroll-viewport [itemSize]="10" class="scroller">
-        <div *cdkVirtualFor="let tenant of tenants;
-        let even = even;"
-        [class.example-alternate]="even">
-            <div class="example-item-detail">
-                {{tenant.name}}
-            </div>
+<div class="login-page">
+    <div class="login-box" layout-align="center center">
+        <div class="login-content-box">
+
+            <!-- <app-tenant-select class = "tenant-select"></app-tenant-select> -->
+            <app-tenant-create></app-tenant-create>
         </div>
-    </cdk-virtual-scroll-viewport>
-    <div class="example-button-container">
-        <button mat-fab color="warn" aria-label="Example icon button with a home icon">
-          <mat-icon>home</mat-icon>
-        </button>
     </div>
-</div>
 </div>

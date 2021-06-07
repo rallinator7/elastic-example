@@ -1,0 +1,52 @@
+  .select-tenant-box {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: auto 100% auto;
+    grid-template-rows: 30% 60% auto;
+ 
+  }
+  
+  .login-header {
+    text-align: center;
+    grid-column: 2/2;
+  }
+
+  .scroller {
+    height: 80%;
+    width: 100%;
+    grid-column: 2/3;
+    grid-row: 2/3;
+  }
+
+  .example-item-detail {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    color:darkslategrey;
+  }
+
+  .example-item-detail:hover{
+    background: #8d97d3;
+    color: white;
+  }
+  
+  .example-alternate {
+    background: #ced3ec;
+  }
+  
+  .create-button-block {
+    display: flex;
+    grid-column: 2/3;
+    grid-row: 3/3;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .create-button{
+    background-color: #8d97d3;
+    color: white;
+  }
+  

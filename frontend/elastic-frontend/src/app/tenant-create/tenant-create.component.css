@@ -1,0 +1,51 @@
+.create-tenant-content-box {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: auto 100% auto;
+    grid-template-rows: auto 50% auto;
+}
+
+.create-tenant-header-box {
+    grid-column: 2/2;
+}
+
+.create-tenant-form-box {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: auto 100% auto;
+    grid-template-rows: auto 50% auto;
+    grid-column: 2/2;
+    grid-row:2/2;
+}
+
+.tenant-form {
+    grid-column: 2/2;
+    grid-row:2/2;
+}
+
+
+.name {
+    width: 100%;
+}
+
+.create-button-box {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    grid-column: 2/3;
+    grid-row: 3/3;
+}
+
+.back-button-box {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    grid-column: 2/3;
+    grid-row: 3/3;
+}
+
+.create-button{
+    color: white;
+}

@@ -1,0 +1,62 @@
+@use '~@angular/material' as mat;
+
+@include mat.core();
+
+$primary-palette: (
+    50 : #f0f8f0,
+    100 : #d9eeda,
+    200 : #c0e3c2,
+    300 : #a7d8a9,
+    400 : #94cf96,
+    500 : #81c784,
+    600 : #79c17c,
+    700 : #6eba71,
+    800 : #64b367,
+    900 : #51a654,
+    A100 : #ffffff,
+    A200 : #d4ffd6,
+    A400 : #a1ffa5,
+    A700 : #88ff8c,
+    contrast: (
+        50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: white,
+    )
+);
+
+$secondary-palette:(
+    50 : #ebedf7,
+    100 : #ced3ec,
+    200 : #aeb5e0,
+    300 : #8d97d3,
+    400 : #7481c9,
+    500 : #5c6bc0,
+    600 : #5463ba,
+    700 : #4a58b2,
+    800 : #414eaa,
+    900 : #303c9c,
+    A100 : #e3e6ff,
+    A200 : #b0b8ff,
+    A400 : #7d8aff,
+    A700 : #6373ff,
+    contrast: (
+        50: rgba(black, 0.87),
+        100: rgba(black, 0.87),
+        200: rgba(black, 0.87),
+        300: white,
+    )
+);
+
+$elastic-example-primary: mat.define-palette($primary-palette, 300,100,600);
+$elastic-example-secondary: mat.define-palette($secondary-palette, 300,100,600);
+
+$elastic-light-theme: mat.define-light-theme((
+    color: (
+      primary: $elastic-example-primary,
+      accent: $elastic-example-secondary,
+    )
+   )
+);
+
+@include mat.all-component-themes($elastic-light-theme);
