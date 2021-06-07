@@ -1,0 +1,12 @@
+<div class="login-page">
+    <div class="login-box">
+        <div class="login-content-box">
+            <div *ngIf="tenantView == 'select'" [@onSelect] class="inner-login-content-box">
+                <app-tenant-select></app-tenant-select>
+            </div>
+            <div *ngIf="tenantView == 'create'" [@onCreate] class="inner-login-content-box">
+                <app-tenant-create></app-tenant-create>
+            </div>
+        </div>
+    </div>
+</div>

@@ -7,13 +7,13 @@
         <div *cdkVirtualFor="let tenant of tenants;
         let even = even;"
         [class.example-alternate]="even">
-            <div class="example-item-detail">
+            <div class="example-item-detail" [routerLink]="['/dashboard/'+tenant.id]">
                 {{tenant.name}}
             </div>
         </div>
     </cdk-virtual-scroll-viewport>
     <div class="create-button-block">
-        <button mat-fab class="create-button" aria-label="Example icon button with a home icon">
+        <button mat-fab class="create-button" (click)="changeToCreate()" aria-label="Example icon button with a home icon">
         <mat-icon>add</mat-icon>
         </button>
     </div>

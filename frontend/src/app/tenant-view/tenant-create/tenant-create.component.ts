@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TenantViewService } from '../services/tenant-view.service'
 
 @Component({
   selector: 'app-tenant-create',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TenantCreateComponent implements OnInit {
 
-  constructor() { }
+  constructor(private tenantViewService: TenantViewService) { }
 
   ngOnInit(): void {
+  }
+
+  changeToSelect() {
+    this.tenantViewService.setTenantView('select');
   }
 
 }

@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import {FixedSizeVirtualScrollStrategy, VIRTUAL_SCROLL_STRATEGY} from '@angular/cdk/scrolling';
-import { Tenant} from '../tenant';
-import {TenantService} from '../tenant.service';
+import { Tenant } from '../services/tenant';
+import {TenantService} from '../services/tenant.service';
+import { TenantViewService } from '../services/tenant-view.service'
 
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
   constructor() {
@@ -18,15 +19,19 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
 })
 export class TenantSelectComponent implements OnInit {
 
-  constructor(private tenantService: TenantService) { }
+  constructor(private tenantService: TenantService, private tenantViewService: TenantViewService) { }
   tenants: Tenant[] = [];
   ngOnInit(): void {
     this.getTenants()
   }
+  
 
   getTenants(): void {
     this.tenantService.getTenants()
       .subscribe(tenants => this.tenants = tenants);
   }
 
+  changeToCreate() {
+    this.tenantViewService.setTenantView('create');
+  }
 }

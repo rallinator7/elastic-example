@@ -17,6 +17,27 @@ var (
 	}
 )
 
+func BuildFrontend() error {
+	cd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("error getting current directory: %s", err)
+	}
+
+	p := filepath.Join(cd, "frontend")
+
+	err = os.Chdir(p)
+	if err != nil {
+		return fmt.Errorf("error changing directories: %s", err)
+	}
+
+	err = sh.Run("docker", "build", "-t", "elastic-frontend", p)
+	if err != nil {
+		return fmt.Errorf("error with build: %s", err)
+	}
+
+	return nil
+}
+
 func CreateProto() error {
 	cd, err := os.Getwd()
 	if err != nil {
