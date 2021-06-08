@@ -19,20 +19,10 @@ message CreateResponse {
 message GetAllRequest {}
 
 message GetAllResponse {
-    repeated Tenant tenant = 1;
-}
-
-message NameSearchRequest {
-    string name = 1;
-}
-
-message NameSearchResponse {
-    string id = 1;
-    string name = 2;
+    repeated Tenant tenants = 1;
 }
 
 service TenantService {
     rpc Create(CreateRequest) returns (CreateResponse) {}
     rpc GetAll(GetAllRequest) returns (GetAllResponse) {}
-    rpc NameSearch(NameSearchRequest) returns (NameSearchResponse) {}
 }

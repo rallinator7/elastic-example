@@ -7,8 +7,8 @@
         <div *cdkVirtualFor="let tenant of tenants;
         let even = even;"
         [class.example-alternate]="even">
-            <div class="example-item-detail" [routerLink]="['/dashboard/'+tenant.id]">
-                {{tenant.name}}
+            <div class="example-item-detail" [routerLink]="['/dashboard/'+tenant.getId()]">
+                {{tenant.getName()}}
             </div>
         </div>
     </cdk-virtual-scroll-viewport>

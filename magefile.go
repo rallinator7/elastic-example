@@ -4,9 +4,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/magefile/mage/sh"
 )
@@ -17,28 +18,16 @@ var (
 	}
 )
 
-func BuildFrontend() error {
-	cd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("error getting current directory: %s", err)
-	}
-
-	p := filepath.Join(cd, "frontend")
-
-	err = os.Chdir(p)
-	if err != nil {
-		return fmt.Errorf("error changing directories: %s", err)
-	}
-
-	err = sh.Run("docker", "build", "-t", "elastic-frontend", p)
-	if err != nil {
-		return fmt.Errorf("error with build: %s", err)
-	}
-
-	return nil
-}
-
 func CreateProto() error {
+
+	fpPath := filepath.Join("frontend", "src", "app", "proto")
+	if _, err := os.Stat(fpPath); os.IsNotExist(err) {
+		err := os.Mkdir(fpPath, 0775)
+		if err != nil {
+			return fmt.Errorf("could not create frontend proto path: %s", err)
+		}
+	}
+
 	cd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("error getting current directory: %s", err)
@@ -51,9 +40,24 @@ func CreateProto() error {
 		return fmt.Errorf("error changing directories: %s", err)
 	}
 
-	err = sh.Run("protoc", "--go_out=plugins=grpc:.", "*.proto")
+	files, err := ioutil.ReadDir("./")
 	if err != nil {
-		return fmt.Errorf("error with build: %s", err)
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		extension := filepath.Ext(file.Name())
+		if extension == ".proto" {
+			err = sh.Run("protoc", "--go_out=plugins=grpc:.", file.Name())
+			if err != nil {
+				return fmt.Errorf("error building go proto for %s: %s", file.Name(), err)
+			}
+
+			err = sh.Run("protoc", "--js_out=import_style=commonjs:./../frontend/src/app/proto", "--grpc-web_out=import_style=typescript,mode=grpcwebtext:./../frontend/src/app/proto", file.Name())
+			if err != nil {
+				return fmt.Errorf("error building go proto for %s: %s", file.Name(), err)
+			}
+		}
 	}
 
 	err = os.Chdir(cd)
@@ -70,26 +74,37 @@ func BuildClient() error {
 		return fmt.Errorf("error getting current directory: %s", err)
 	}
 
-	p := filepath.Join(cd, "client")
+	p := filepath.Join(cd, "frontend")
 
 	err = os.Chdir(p)
 	if err != nil {
 		return fmt.Errorf("error changing directories: %s", err)
 	}
 
-	err = sh.RunWith(env, "go", "build")
+	err = sh.Run("docker", "build", "-t", "elastic-client", p)
 	if err != nil {
 		return fmt.Errorf("error with build: %s", err)
 	}
 
-	err = sh.Run("docker", "build", "-t", "proto-client", p)
+	return nil
+}
+
+func BuildEnvoy() error {
+	cd, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("error with build: %s", err)
+		return fmt.Errorf("error getting current directory: %s", err)
 	}
 
-	err = os.Chdir(cd)
+	p := filepath.Join(cd, "envoy")
+
+	err = os.Chdir(p)
 	if err != nil {
-		return fmt.Errorf("could not change directories: %s", err)
+		return fmt.Errorf("error changing directories: %s", err)
+	}
+
+	err = sh.Run("docker", "build", "-t", "elastic-envoy", p)
+	if err != nil {
+		return fmt.Errorf("error with build: %s", err)
 	}
 
 	return nil
@@ -113,7 +128,7 @@ func BuildServer() error {
 		return fmt.Errorf("error with build: %s", err)
 	}
 
-	err = sh.Run("docker", "build", "-t", "proto-server", p)
+	err = sh.Run("docker", "build", "-t", "elastic-server", p)
 	if err != nil {
 		return fmt.Errorf("error with build: %s", err)
 	}
@@ -121,62 +136,6 @@ func BuildServer() error {
 	err = os.Chdir(cd)
 	if err != nil {
 		return fmt.Errorf("could not change directories: %s", err)
-	}
-
-	return nil
-}
-
-func Run() error {
-	err := BuildClient()
-	if err != nil {
-		return fmt.Errorf("could not build client: %s", err)
-	}
-	BuildServer()
-	if err != nil {
-		return fmt.Errorf("could not build server: %s", err)
-	}
-
-	o := runtime.GOOS
-	switch o {
-	case "windows":
-		err = sh.Run("docker", "compose", "up", "-d")
-		if err != nil {
-			return fmt.Errorf("could not run docker compose: %s", err)
-		}
-	case "darwin":
-		err = sh.Run("docker", "compose", "up", "-d")
-		if err != nil {
-			return fmt.Errorf("could not run docker compose: %s", err)
-		}
-	case "linux":
-		err = sh.Run("docker-compose", "up", "-d")
-		if err != nil {
-			return fmt.Errorf("could not run docker compose: %s", err)
-		}
-	}
-
-	return nil
-}
-
-func Stop() error {
-	var err error
-	o := runtime.GOOS
-	switch o {
-	case "windows":
-		err = sh.Run("docker", "compose", "down")
-		if err != nil {
-			return fmt.Errorf("could not run docker compose: %s", err)
-		}
-	case "darwin":
-		err = sh.Run("docker", "compose", "down")
-		if err != nil {
-			return fmt.Errorf("could not run docker compose: %s", err)
-		}
-	case "linux":
-		err = sh.Run("docker-compose", "down")
-		if err != nil {
-			return fmt.Errorf("could not run docker compose: %s", err)
-		}
 	}
 
 	return nil
