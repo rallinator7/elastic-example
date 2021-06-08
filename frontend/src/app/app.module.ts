@@ -15,6 +15,8 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { ClientViewComponent } from './dashboard/client-view/client-view.component';
+import { MessageViewComponent } from './dashboard/message-view/message-view.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     LoginComponent,
     TenantSelectComponent,
     TenantCreateComponent,
-    DashboardComponent
+    DashboardComponent,
+    ClientViewComponent,
+    MessageViewComponent
   ],
   imports: [
     BrowserModule,

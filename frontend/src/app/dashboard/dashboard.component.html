@@ -1,10 +1,33 @@
 <mat-toolbar color="primary">
-    <button mat-icon-button mat-button (click)="drawer.toggle()">
-      <mat-icon>menu</mat-icon>
+    <button mat-icon-button mat-button (click)="drawer.toggle()" class="sidenav-button">
+        <mat-icon inline="true">menu</mat-icon>
     </button>
+    <span class="example-spacer"></span>
+    <span class="page-header">{{ dashboardView | titlecase}}</span>
 </mat-toolbar>  
-<mat-drawer-container class="example-container" autosize>
-    <mat-drawer #drawer class="example-sidenav" mode="side">
+<mat-drawer-container class="sidenav-container" hasBackdrop="false" autosize>
+    <mat-drawer #drawer class="sidenav-drawer" mode="side">
+        <div class="nav-icon-container">
+            <button mat-icon-button class="nav-icon-button" matTooltip="Clients" matTooltipPosition="right" (click)="changeView('clients')" (click)=" drawer.toggle()">
+                <mat-icon inline="true" class="nav-icon">group</mat-icon>
+            </button>
+        </div>
+        <div class="nav-icon-container">
+        <button mat-icon-button class="nav-icon-button" matTooltip="Messages" matTooltipPosition="right" (click)="changeView('messages')" (click)=" drawer.toggle()">
+            <mat-icon inline="true" class="nav-icon">message</mat-icon>
+        </button>
+        </div>
+        <div class="nav-icon-container">
+            <button mat-icon-button class="nav-icon-button" matTooltip="Logout" matTooltipPosition="right" [routerLink]="['/login']">
+                <mat-icon inline="true" class="nav-icon">logout</mat-icon>
+            </button>
+        </div>
     </mat-drawer>
-  </mat-drawer-container>
+    <div *ngIf="dashboardView == 'clients'">
+        <app-client-view></app-client-view>
+    </div>
+    <div *ngIf="dashboardView == 'messages'">
+        <app-message-view></app-message-view>
+    </div>
+</mat-drawer-container>
   
