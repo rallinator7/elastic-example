@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon'; 
+import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import { AppRoutingModule } from './app-routing.module';
@@ -17,6 +17,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { ClientViewComponent } from './dashboard/client-view/client-view.component';
 import { MessageViewComponent } from './dashboard/message-view/message-view.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { MessageViewComponent } from './dashboard/message-view/message-view.comp
     MatDividerModule,
     MatSidenavModule,
     MatToolbarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

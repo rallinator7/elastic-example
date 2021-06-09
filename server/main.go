@@ -13,8 +13,9 @@ import (
 
 func main() {
 	ev := map[string]string{
-		"PORT":         "",
-		"ELASTIC_CONN": "",
+		"PORT":          "",
+		"ELASTIC_CONN":  "",
+		"ELASTIC_INDEX": "",
 	}
 	for k := range ev {
 		ev[k] = os.Getenv(k)
@@ -30,7 +31,7 @@ func main() {
 
 	es, err := elastic.NewClient(ev["ELASTIC_CONN"])
 
-	tenantServer := tenant.NewServer(es)
+	tenantServer := tenant.NewServer(es, ev["ELASTIC_INDEX"])
 	// messageServer := message.NewServer(es)
 	// clientServer := client.NewServer(es)
 

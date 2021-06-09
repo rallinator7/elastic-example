@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, EMPTY } from 'rxjs';
+import {Observable, from} from 'rxjs';
 import * as grpcWeb from 'grpc-web';
 import { TenantServiceClient } from './../../proto/TenantServiceClientPb'
-import { GetAllRequest, GetAllResponse, Tenant} from './../../proto/tenant_pb'
-import {error} from "@angular/compiler/src/util";
+import {CreateRequest, CreateResponse, GetAllRequest, GetAllResponse, Tenant} from './../../proto/tenant_pb'
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +14,34 @@ export class TenantService {
   }
 
   getTenants(): Observable<Tenant[]> {
-    let protoTenants: Tenant[] = [];
-    let req = new GetAllRequest();
-    const call = this.client.getAll(req, {},
-      (err: grpcWeb.Error, response: GetAllResponse) => {
-        console.log(response.getTenantsList());
+    let protoTenants: Promise<Tenant[]>;
+    protoTenants = new Promise((resolve, reject) => {
+      const req = new GetAllRequest()
+      this.client.getAll(req, null, (err, response: GetAllResponse) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(response.getTenantsList());
       });
+    });
+    const observable = from(protoTenants);
+    return observable;
+  }
 
-    call.on()
+  createTenant(name: string): Promise<Tenant> {
+    let tenant: Promise<Tenant>;
+
+    tenant = new Promise((resolve, reject) => {
+      const req = new CreateRequest();
+      req.setName(name);
+      this.client.create(req, null, (err, response: CreateResponse) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(response.getTenant()!);
+      });
+    });
+
+    return tenant;
   }
 }

@@ -4,7 +4,7 @@
         <p>select which tenant you would like to manage or create a new one</p>
     </div>
     <cdk-virtual-scroll-viewport [itemSize]="10" class="scroller">
-        <div *cdkVirtualFor="let tenant of tenants;
+        <div  *cdkVirtualFor="let tenant of tenants;
         let even = even;"
         [class.example-alternate]="even">
             <div class="example-item-detail" [routerLink]="['/dashboard/'+tenant.getId()]">

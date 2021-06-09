@@ -3,12 +3,19 @@
 package main
 
 import (
+	"bytes"
+	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/elastic/go-elasticsearch/esapi"
+	"github.com/elastic/go-elasticsearch/v7"
+	"github.com/google/uuid"
 	"github.com/magefile/mage/sh"
 )
 
@@ -66,6 +73,166 @@ func CreateProto() error {
 	}
 
 	return nil
+}
+
+func getElasticClient() (*elasticsearch.Client, error) {
+	cfg := elasticsearch.Config{
+		Addresses: []string{"http://localhost:9200"},
+	}
+
+	es, err := elasticsearch.NewClient(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("could not create elastic client: %s", err)
+	}
+
+	return es, nil
+}
+
+func CreateTenant() error {
+
+	es, err := getElasticClient()
+
+	id := uuid.New()
+	var b strings.Builder
+	b.WriteString(`{"type" : "tenant",`)
+	b.WriteString(`"tenant_id" : "` + id.String() + `",`)
+	b.WriteString(`"tenant_name" : "` + "test" + `",`)
+	b.WriteString(`"relation" : "tenant"}`)
+
+	req := esapi.IndexRequest{
+		Index:      "elastic-example",
+		DocumentID: id.String(),
+		Body:       strings.NewReader(b.String()),
+		Refresh:    "true",
+	}
+
+	// Perform the request with the client.
+	res, err := req.Do(context.Background(), es)
+	if err != nil {
+		log.Fatalf("Error getting response: %s", err)
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error %s", "error")
+	} else {
+		// Deserialize the response into a map.
+		var r map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+			log.Printf("Error parsing the response body: %s", err)
+		} else {
+			// Print the response status and indexed document version.
+			fmt.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
+		}
+	}
+
+	// id := uuid.New()
+
+	// var b strings.Builder
+	// b.WriteString(`{"type" : "tenant",`)
+	// b.WriteString(`{"tenant_id" : "` + id.String() + `",`)
+	// b.WriteString(`{"tenant_name" : "` + "test" + `",`)
+	// b.WriteString(`{"relation" : "tenant"`)
+	// b.WriteString(`"}`)
+
+	// fmt.Print(strings.NewReader(b.String()))
+
+	// elasticReq := esapi.IndexRequest{
+	// 	Index:      "elastic-example",
+	// 	DocumentID: id.String(),
+	// 	Body:       strings.NewReader(b.String()),
+	// 	Refresh:    "true",
+	// }
+
+	// res, err := elasticReq.Do(context.Background(), es)
+	// if err != nil {
+	// 	return fmt.Errorf("could not add tenant to index: %s", err)
+	// }
+	// defer res.Body.Close()
+
+	// if res.IsError() {
+	// 	var bytes []byte
+	// 	_, err := res.Body.Read(bytes)
+	// 	if err != nil {
+	// 		return fmt.Errorf("oops: %s", err)
+	// 	}
+	// 	return fmt.Errorf("error indexing tenant: %s", string(bytes))
+	// }
+
+	return nil
+}
+
+func GetTenants() error {
+	cfg := elasticsearch.Config{
+		Addresses: []string{"http://localhost:9200"},
+	}
+
+	es, err := elasticsearch.NewClient(cfg)
+	if err != nil {
+		return fmt.Errorf("could not create elastic client: %s", err)
+	}
+
+	var buf bytes.Buffer
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"match": map[string]interface{}{
+				"type": "tenant",
+			},
+		},
+	}
+	if err := json.NewEncoder(&buf).Encode(query); err != nil {
+		return fmt.Errorf("Error encoding query: %s", err)
+	}
+
+	res, err := es.Search(
+		es.Search.WithContext(context.Background()),
+		es.Search.WithIndex("elastic-example"),
+		es.Search.WithBody(&buf),
+		es.Search.WithTrackTotalHits(true),
+		es.Search.WithPretty(),
+	)
+	if err != nil {
+		return fmt.Errorf("Error getting response: %s", err)
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		var e map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
+			return fmt.Errorf("Error parsing the response body: %s", err)
+		} else {
+			// Print the response status and error information.
+			return fmt.Errorf("[%s] %s: %s",
+				res.Status(),
+				e["error"].(map[string]interface{})["type"],
+				e["error"].(map[string]interface{})["reason"],
+			)
+		}
+	}
+
+	var r map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+		return fmt.Errorf("Error parsing the response body: %s", err)
+	}
+
+	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
+		tenantJson := hit.(map[string]interface{})["_source"].(map[string]interface{})
+
+		t := ElasticTenant{
+			Id:   tenantJson["tenant_id"].(string),
+			Name: tenantJson["tenant_name"].(string),
+		}
+
+		fmt.Println(t)
+
+	}
+
+	return nil
+}
+
+type ElasticTenant struct {
+	Id   string
+	Name string
 }
 
 func BuildClient() error {

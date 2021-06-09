@@ -4,10 +4,10 @@
         <p>please enter in the new tenant's information</p>
     </div>
     <div class="create-tenant-form-box">
-        <form class="tenant-form">
+        <form (ngSubmit)="createTenant()" [formGroup]="createForm" id="create-form" class="tenant-form">
             <mat-form-field color="accent" class="name">
             <mat-label>Name</mat-label>
-            <input matInput>
+            <input matInput formControlName="name" >
             </mat-form-field>
         </form>
     </div>
@@ -15,6 +15,6 @@
         <button mat-button color="accent" (click)="changeToSelect()" >Back</button>
     </div>
     <div class="create-button-box">
-        <button mat-raised-button color="accent" class="create-button">Create</button>
+        <button mat-raised-button color="accent" form="create-form" type="submit" class="create-button">Create</button>
     </div>
 </div>

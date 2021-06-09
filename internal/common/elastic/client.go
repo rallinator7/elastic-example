@@ -16,6 +16,10 @@ func NewClient(connection string) (*elasticsearch.Client, error) {
 		return nil, errors.New("could not create elasticsearch client - must provide , seperated list of endpoints")
 	}
 
+	for _, e := range endpoints {
+		fmt.Println(e)
+	}
+
 	cfg := elasticsearch.Config{
 		Addresses: endpoints,
 	}
