@@ -15,6 +15,7 @@ import (
 type Server struct {
 	ElasticClient *elasticsearch.Client
 	Index         string
+	UnimplementedTenantServiceServer
 }
 
 func NewServer(ec *elasticsearch.Client, index string) *Server {
@@ -90,7 +91,6 @@ func (s *Server) GetAll(ctx context.Context, req *GetAllRequest) (*GetAllRespons
 		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
 			return nil, fmt.Errorf("Error parsing the response body: %s", err)
 		} else {
-			// Print the response status and error information.
 			return nil, fmt.Errorf("[%s] %s: %s",
 				res.Status(),
 				e["error"].(map[string]interface{})["type"],

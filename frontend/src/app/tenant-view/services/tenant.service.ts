@@ -11,6 +11,7 @@ export class TenantService {
   client: TenantServiceClient;
   constructor() {
     this.client = new TenantServiceClient('http://127.0.0.1:8000', null, null);
+    // this.client = new TenantServiceClient('http://envoy:8000', null, null);
   }
 
   getTenants(): Observable<Tenant[]> {

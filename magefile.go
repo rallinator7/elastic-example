@@ -55,7 +55,7 @@ func CreateProto() error {
 	for _, file := range files {
 		extension := filepath.Ext(file.Name())
 		if extension == ".proto" {
-			err = sh.Run("protoc", "--go_out=plugins=grpc:.", file.Name())
+			err = sh.Run("protoc", "--go_out=.", "--go_opt=paths=import", "--go-grpc_out=.", "--go-grpc_opt=paths=import", file.Name())
 			if err != nil {
 				return fmt.Errorf("error building go proto for %s: %s", file.Name(), err)
 			}
@@ -94,14 +94,17 @@ func CreateTenant() error {
 
 	id := uuid.New()
 	var b strings.Builder
-	b.WriteString(`{"type" : "tenant",`)
-	b.WriteString(`"tenant_id" : "` + id.String() + `",`)
-	b.WriteString(`"tenant_name" : "` + "test" + `",`)
-	b.WriteString(`"relation" : "tenant"}`)
+	b.WriteString(`{"type" : "client",`)
+	b.WriteString(`"client_id" : "` + id.String() + `",`)
+	b.WriteString(`"client_name" : "` + "arielle" + `",`)
+	b.WriteString(`"client_phone_number" : "` + "55555555555" + `",`)
+	b.WriteString(`"client_address" : "` + "test st." + `",`)
+	b.WriteString(`"relation" : {"name" : "client", "parent" : "7bd58e24-a7d5-4b36-ba5b-54603ebafd96"}}`)
 
 	req := esapi.IndexRequest{
 		Index:      "elastic-example",
 		DocumentID: id.String(),
+		Routing:    "7bd58e24-a7d5-4b36-ba5b-54603ebafd96",
 		Body:       strings.NewReader(b.String()),
 		Refresh:    "true",
 	}
@@ -175,11 +178,28 @@ func GetTenants() error {
 	var buf bytes.Buffer
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
-			"match": map[string]interface{}{
-				"type": "tenant",
+			"bool": map[string]interface{}{
+				"must": map[string]interface{}{
+					"parent_id": map[string]interface{}{
+						"type": "client",
+						"id":   "7bd58e24-a7d5-4b36-ba5b-54603ebafd96",
+					},
+				},
+				"should": map[string]interface{}{
+					"multi_match": map[string]interface{}{
+						"query": "iel",
+						"type":  "bool_prefix",
+						"fields": []string{
+							"client_name",
+							"client_name._2gram",
+							"client_name._3gram",
+						},
+					},
+				},
 			},
 		},
 	}
+
 	if err := json.NewEncoder(&buf).Encode(query); err != nil {
 		return fmt.Errorf("Error encoding query: %s", err)
 	}
@@ -194,7 +214,6 @@ func GetTenants() error {
 	if err != nil {
 		return fmt.Errorf("Error getting response: %s", err)
 	}
-	defer res.Body.Close()
 
 	if res.IsError() {
 		var e map[string]interface{}
@@ -216,15 +235,9 @@ func GetTenants() error {
 	}
 
 	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
-		tenantJson := hit.(map[string]interface{})["_source"].(map[string]interface{})
+		clientJson := hit.(map[string]interface{})["_source"].(map[string]interface{})
 
-		t := ElasticTenant{
-			Id:   tenantJson["tenant_id"].(string),
-			Name: tenantJson["tenant_name"].(string),
-		}
-
-		fmt.Println(t)
-
+		fmt.Println(clientJson)
 	}
 
 	return nil

@@ -8,11 +8,14 @@ import (
 
 type Server struct {
 	ElasticClient *elasticsearch.Client
+	Index         string
+	UnimplementedClientServiceServer
 }
 
-func NewServer(ec *elasticsearch.Client) *Server {
+func NewServer(ec *elasticsearch.Client, index string) *Server {
 	s := Server{
 		ElasticClient: ec,
+		Index:         index,
 	}
 	return &s
 }
