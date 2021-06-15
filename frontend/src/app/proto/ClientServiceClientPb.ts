@@ -155,5 +155,45 @@ export class ClientServiceClient {
     this.methodInfoGet);
   }
 
+  methodInfoGetAll = new grpcWeb.AbstractClientBase.MethodInfo(
+    client_pb.GetAllResponse,
+    (request: client_pb.GetAllRequest) => {
+      return request.serializeBinary();
+    },
+    client_pb.GetAllResponse.deserializeBinary
+  );
+
+  getAll(
+    request: client_pb.GetAllRequest,
+    metadata: grpcWeb.Metadata | null): Promise<client_pb.GetAllResponse>;
+
+  getAll(
+    request: client_pb.GetAllRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: client_pb.GetAllResponse) => void): grpcWeb.ClientReadableStream<client_pb.GetAllResponse>;
+
+  getAll(
+    request: client_pb.GetAllRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: client_pb.GetAllResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/client.ClientService/GetAll',
+        request,
+        metadata || {},
+        this.methodInfoGetAll,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/client.ClientService/GetAll',
+    request,
+    metadata || {},
+    this.methodInfoGetAll);
+  }
+
 }
 

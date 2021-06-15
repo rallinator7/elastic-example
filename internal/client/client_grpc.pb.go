@@ -21,6 +21,7 @@ type ClientServiceClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	NameSearch(ctx context.Context, in *NameSearchRequest, opts ...grpc.CallOption) (*NameSearchResponse, error)
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 }
 
 type clientServiceClient struct {
@@ -58,6 +59,15 @@ func (c *clientServiceClient) Get(ctx context.Context, in *GetRequest, opts ...g
 	return out, nil
 }
 
+func (c *clientServiceClient) GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error) {
+	out := new(GetAllResponse)
+	err := c.cc.Invoke(ctx, "/client.ClientService/GetAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ClientServiceServer is the server API for ClientService service.
 // All implementations must embed UnimplementedClientServiceServer
 // for forward compatibility
@@ -65,6 +75,7 @@ type ClientServiceServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	NameSearch(context.Context, *NameSearchRequest) (*NameSearchResponse, error)
 	Get(context.Context, *GetRequest) (*GetResponse, error)
+	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
 	mustEmbedUnimplementedClientServiceServer()
 }
 
@@ -80,6 +91,9 @@ func (UnimplementedClientServiceServer) NameSearch(context.Context, *NameSearchR
 }
 func (UnimplementedClientServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedClientServiceServer) GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
 func (UnimplementedClientServiceServer) mustEmbedUnimplementedClientServiceServer() {}
 
@@ -148,6 +162,24 @@ func _ClientService_Get_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ClientService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientServiceServer).GetAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/client.ClientService/GetAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientServiceServer).GetAll(ctx, req.(*GetAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ClientService_ServiceDesc is the grpc.ServiceDesc for ClientService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -166,6 +198,10 @@ var ClientService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _ClientService_Get_Handler,
+		},
+		{
+			MethodName: "GetAll",
+			Handler:    _ClientService_GetAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

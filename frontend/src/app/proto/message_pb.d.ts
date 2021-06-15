@@ -53,13 +53,19 @@ export namespace Message {
 }
 
 export class CreateRequest extends jspb.Message {
+  getTenantid(): string;
+  setTenantid(value: string): CreateRequest;
+
   getClientid(): string;
   setClientid(value: string): CreateRequest;
 
-  getMessage(): Message | undefined;
-  setMessage(value?: Message): CreateRequest;
-  hasMessage(): boolean;
-  clearMessage(): CreateRequest;
+  getType(): string;
+  setType(value: string): CreateRequest;
+
+  getFieldsList(): Array<Field>;
+  setFieldsList(value: Array<Field>): CreateRequest;
+  clearFieldsList(): CreateRequest;
+  addFields(value?: Field, index?: number): Field;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateRequest.AsObject;
@@ -71,8 +77,10 @@ export class CreateRequest extends jspb.Message {
 
 export namespace CreateRequest {
   export type AsObject = {
+    tenantid: string,
     clientid: string,
-    message?: Message.AsObject,
+    type: string,
+    fieldsList: Array<Field.AsObject>,
   }
 }
 
@@ -115,10 +123,10 @@ export namespace GetAllRequest {
 }
 
 export class GetAllResponse extends jspb.Message {
-  getMessageList(): Array<Message>;
-  setMessageList(value: Array<Message>): GetAllResponse;
-  clearMessageList(): GetAllResponse;
-  addMessage(value?: Message, index?: number): Message;
+  getMessagesList(): Array<Message>;
+  setMessagesList(value: Array<Message>): GetAllResponse;
+  clearMessagesList(): GetAllResponse;
+  addMessages(value?: Message, index?: number): Message;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetAllResponse.AsObject;
@@ -130,7 +138,7 @@ export class GetAllResponse extends jspb.Message {
 
 export namespace GetAllResponse {
   export type AsObject = {
-    messageList: Array<Message.AsObject>,
+    messagesList: Array<Message.AsObject>,
   }
 }
 
@@ -157,10 +165,10 @@ export namespace GetAllOfTypeRequest {
 }
 
 export class GetAllOfTypeResponse extends jspb.Message {
-  getMessageList(): Array<Message>;
-  setMessageList(value: Array<Message>): GetAllOfTypeResponse;
-  clearMessageList(): GetAllOfTypeResponse;
-  addMessage(value?: Message, index?: number): Message;
+  getMessagesList(): Array<Message>;
+  setMessagesList(value: Array<Message>): GetAllOfTypeResponse;
+  clearMessagesList(): GetAllOfTypeResponse;
+  addMessages(value?: Message, index?: number): Message;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetAllOfTypeResponse.AsObject;
@@ -172,7 +180,83 @@ export class GetAllOfTypeResponse extends jspb.Message {
 
 export namespace GetAllOfTypeResponse {
   export type AsObject = {
-    messageList: Array<Message.AsObject>,
+    messagesList: Array<Message.AsObject>,
+  }
+}
+
+export class SearchClientMessagesRequest extends jspb.Message {
+  getClientid(): string;
+  setClientid(value: string): SearchClientMessagesRequest;
+
+  getMessagecontent(): string;
+  setMessagecontent(value: string): SearchClientMessagesRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SearchClientMessagesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: SearchClientMessagesRequest): SearchClientMessagesRequest.AsObject;
+  static serializeBinaryToWriter(message: SearchClientMessagesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SearchClientMessagesRequest;
+  static deserializeBinaryFromReader(message: SearchClientMessagesRequest, reader: jspb.BinaryReader): SearchClientMessagesRequest;
+}
+
+export namespace SearchClientMessagesRequest {
+  export type AsObject = {
+    clientid: string,
+    messagecontent: string,
+  }
+}
+
+export class SearchClientMessagesResponse extends jspb.Message {
+  getMessagesList(): Array<Message>;
+  setMessagesList(value: Array<Message>): SearchClientMessagesResponse;
+  clearMessagesList(): SearchClientMessagesResponse;
+  addMessages(value?: Message, index?: number): Message;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SearchClientMessagesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SearchClientMessagesResponse): SearchClientMessagesResponse.AsObject;
+  static serializeBinaryToWriter(message: SearchClientMessagesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SearchClientMessagesResponse;
+  static deserializeBinaryFromReader(message: SearchClientMessagesResponse, reader: jspb.BinaryReader): SearchClientMessagesResponse;
+}
+
+export namespace SearchClientMessagesResponse {
+  export type AsObject = {
+    messagesList: Array<Message.AsObject>,
+  }
+}
+
+export class GetMessageTypesRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetMessageTypesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetMessageTypesRequest): GetMessageTypesRequest.AsObject;
+  static serializeBinaryToWriter(message: GetMessageTypesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetMessageTypesRequest;
+  static deserializeBinaryFromReader(message: GetMessageTypesRequest, reader: jspb.BinaryReader): GetMessageTypesRequest;
+}
+
+export namespace GetMessageTypesRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetMessageTypesResponse extends jspb.Message {
+  getTypesList(): Array<string>;
+  setTypesList(value: Array<string>): GetMessageTypesResponse;
+  clearTypesList(): GetMessageTypesResponse;
+  addTypes(value: string, index?: number): GetMessageTypesResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetMessageTypesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetMessageTypesResponse): GetMessageTypesResponse.AsObject;
+  static serializeBinaryToWriter(message: GetMessageTypesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetMessageTypesResponse;
+  static deserializeBinaryFromReader(message: GetMessageTypesResponse, reader: jspb.BinaryReader): GetMessageTypesResponse;
+}
+
+export namespace GetMessageTypesResponse {
+  export type AsObject = {
+    typesList: Array<string>,
   }
 }
 

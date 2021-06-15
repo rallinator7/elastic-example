@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {Observable, from} from 'rxjs';
-import * as grpcWeb from 'grpc-web';
 import { TenantServiceClient } from './../../proto/TenantServiceClientPb'
 import {CreateRequest, CreateResponse, GetAllRequest, GetAllResponse, Tenant} from './../../proto/tenant_pb'
 

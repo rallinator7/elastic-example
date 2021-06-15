@@ -43,8 +43,17 @@ message GetResponse {
     Client client = 1;
 }
 
+message GetAllRequest {
+    string tenantId = 1;
+}
+
+message GetAllResponse {
+    repeated Client clients = 1;
+}
+
 service ClientService {
     rpc Create(CreateRequest) returns (CreateResponse) {}
     rpc NameSearch(NameSearchRequest) returns (NameSearchResponse) {}
     rpc Get(GetRequest) returns (GetResponse) {}
+    rpc GetAll(GetAllRequest) returns (GetAllResponse) {}
 }

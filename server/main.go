@@ -40,7 +40,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 
 	tenant.RegisterTenantServiceServer(grpcServer, tenantServer)
-	message.RegisterClientServiceServer(grpcServer, messageServer)
+	message.RegisterMessageServiceServer(grpcServer, messageServer)
 	client.RegisterClientServiceServer(grpcServer, clientServer)
 
 	err = grpcServer.Serve(lis)

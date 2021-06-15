@@ -165,36 +165,75 @@ func CreateTenant() error {
 	return nil
 }
 
-func GetTenants() error {
-	cfg := elasticsearch.Config{
-		Addresses: []string{"http://localhost:9200"},
+func CreateClient() error {
+	es, err := getElasticClient()
+
+	id := uuid.New()
+
+	var b strings.Builder
+	b.WriteString(`{"type" : "client",`)
+	b.WriteString(`"client_id" : "` + id.String() + `",`)
+	b.WriteString(`"client_name" : "` + "Sam Sampson" + `",`)
+	b.WriteString(`"client_phone_number" : "` + "9205555656" + `",`)
+	b.WriteString(`"client_address" : "` + "456 Piccolo Dr, Oshkosh, WI 55544" + `",`)
+	b.WriteString(`"relation" : {"name" : "client", "parent" : "` + "0741095d-9ec1-4757-86df-a2ae01473db3" + `"}}`)
+
+	elasticReq := esapi.IndexRequest{
+		Index:      "elastic-example",
+		DocumentID: id.String(),
+		Routing:    "0741095d-9ec1-4757-86df-a2ae01473db3",
+		Body:       strings.NewReader(b.String()),
+		Refresh:    "true",
 	}
 
-	es, err := elasticsearch.NewClient(cfg)
+	res, err := elasticReq.Do(context.Background(), es)
 	if err != nil {
-		return fmt.Errorf("could not create elastic client: %s", err)
+		return fmt.Errorf("could not add tenant to index: %s", err)
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error indexing tenant: %s", res.Status())
 	}
 
+	var bod []byte
+
+	_, err = res.Body.Read(bod)
+	if err != nil {
+		return fmt.Errorf("could not read response body: %s", err)
+	}
+
+	fmt.Println(string(bod))
+
+	return nil
+}
+
+type Field struct {
+	Key   string
+	Value string
+}
+
+type Message struct {
+	Id     string
+	Type   string
+	Fields []*Field
+}
+
+func Fields() error {
+	es, err := getElasticClient()
 	var buf bytes.Buffer
+
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
 			"bool": map[string]interface{}{
-				"must": map[string]interface{}{
-					"parent_id": map[string]interface{}{
-						"type": "client",
-						"id":   "7bd58e24-a7d5-4b36-ba5b-54603ebafd96",
-					},
-				},
-				"should": map[string]interface{}{
-					"multi_match": map[string]interface{}{
-						"query": "iel",
-						"type":  "bool_prefix",
-						"fields": []string{
-							"client_name",
-							"client_name._2gram",
-							"client_name._3gram",
-						},
-					},
+				"must": []map[string]interface{}{
+					{"parent_id": map[string]interface{}{
+						"type": "message",
+						"id":   "8895edb8-f0f3-4e85-88cb-588ab04a854b",
+					}},
+					{"match": map[string]interface{}{
+						"message_type": "scheduling",
+					}},
 				},
 			},
 		},
@@ -211,6 +250,7 @@ func GetTenants() error {
 		es.Search.WithTrackTotalHits(true),
 		es.Search.WithPretty(),
 	)
+
 	if err != nil {
 		return fmt.Errorf("Error getting response: %s", err)
 	}
@@ -218,9 +258,8 @@ func GetTenants() error {
 	if res.IsError() {
 		var e map[string]interface{}
 		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
-			return fmt.Errorf("Error parsing the response body: %s", err)
+			return fmt.Errorf("error parsing the response body: %s", err)
 		} else {
-			// Print the response status and error information.
 			return fmt.Errorf("[%s] %s: %s",
 				res.Status(),
 				e["error"].(map[string]interface{})["type"],
@@ -231,14 +270,36 @@ func GetTenants() error {
 
 	var r map[string]interface{}
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-		return fmt.Errorf("Error parsing the response body: %s", err)
+		return fmt.Errorf("error parsing the response body: %s", err)
 	}
+
+	var messageList []*Message
 
 	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
-		clientJson := hit.(map[string]interface{})["_source"].(map[string]interface{})
+		messageJson := hit.(map[string]interface{})["_source"].(map[string]interface{})
 
-		fmt.Println(clientJson)
+		mf := messageJson["message_fields"].([]interface{})
+
+		var fields []*Field
+		for _, f := range mf {
+			newField := Field{
+				Key:   f.(map[string]interface{})["Key"].(string),
+				Value: f.(map[string]interface{})["Value"].(string),
+			}
+
+			fields = append(fields, &newField)
+		}
+
+		message := Message{
+			Id:     messageJson["message_id"].(string),
+			Type:   messageJson["message_type"].(string),
+			Fields: fields,
+		}
+
+		messageList = append(messageList, &message)
 	}
+
+	fmt.Println(messageList[0].Type)
 
 	return nil
 }

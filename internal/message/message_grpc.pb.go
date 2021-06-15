@@ -14,158 +14,230 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// ClientServiceClient is the client API for ClientService service.
+// MessageServiceClient is the client API for MessageService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ClientServiceClient interface {
+type MessageServiceClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	GetAllOfType(ctx context.Context, in *GetAllOfTypeRequest, opts ...grpc.CallOption) (*GetAllOfTypeResponse, error)
+	SearchClientMessages(ctx context.Context, in *SearchClientMessagesRequest, opts ...grpc.CallOption) (*SearchClientMessagesResponse, error)
+	GetMessageTypes(ctx context.Context, in *GetMessageTypesRequest, opts ...grpc.CallOption) (*GetMessageTypesResponse, error)
 }
 
-type clientServiceClient struct {
+type messageServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewClientServiceClient(cc grpc.ClientConnInterface) ClientServiceClient {
-	return &clientServiceClient{cc}
+func NewMessageServiceClient(cc grpc.ClientConnInterface) MessageServiceClient {
+	return &messageServiceClient{cc}
 }
 
-func (c *clientServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
+func (c *messageServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
 	out := new(CreateResponse)
-	err := c.cc.Invoke(ctx, "/message.ClientService/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/message.MessageService/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientServiceClient) GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error) {
+func (c *messageServiceClient) GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error) {
 	out := new(GetAllResponse)
-	err := c.cc.Invoke(ctx, "/message.ClientService/GetAll", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/message.MessageService/GetAll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientServiceClient) GetAllOfType(ctx context.Context, in *GetAllOfTypeRequest, opts ...grpc.CallOption) (*GetAllOfTypeResponse, error) {
+func (c *messageServiceClient) GetAllOfType(ctx context.Context, in *GetAllOfTypeRequest, opts ...grpc.CallOption) (*GetAllOfTypeResponse, error) {
 	out := new(GetAllOfTypeResponse)
-	err := c.cc.Invoke(ctx, "/message.ClientService/GetAllOfType", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/message.MessageService/GetAllOfType", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ClientServiceServer is the server API for ClientService service.
-// All implementations must embed UnimplementedClientServiceServer
+func (c *messageServiceClient) SearchClientMessages(ctx context.Context, in *SearchClientMessagesRequest, opts ...grpc.CallOption) (*SearchClientMessagesResponse, error) {
+	out := new(SearchClientMessagesResponse)
+	err := c.cc.Invoke(ctx, "/message.MessageService/SearchClientMessages", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageServiceClient) GetMessageTypes(ctx context.Context, in *GetMessageTypesRequest, opts ...grpc.CallOption) (*GetMessageTypesResponse, error) {
+	out := new(GetMessageTypesResponse)
+	err := c.cc.Invoke(ctx, "/message.MessageService/GetMessageTypes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// MessageServiceServer is the server API for MessageService service.
+// All implementations must embed UnimplementedMessageServiceServer
 // for forward compatibility
-type ClientServiceServer interface {
+type MessageServiceServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
 	GetAllOfType(context.Context, *GetAllOfTypeRequest) (*GetAllOfTypeResponse, error)
-	mustEmbedUnimplementedClientServiceServer()
+	SearchClientMessages(context.Context, *SearchClientMessagesRequest) (*SearchClientMessagesResponse, error)
+	GetMessageTypes(context.Context, *GetMessageTypesRequest) (*GetMessageTypesResponse, error)
+	mustEmbedUnimplementedMessageServiceServer()
 }
 
-// UnimplementedClientServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedClientServiceServer struct {
+// UnimplementedMessageServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedMessageServiceServer struct {
 }
 
-func (UnimplementedClientServiceServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
+func (UnimplementedMessageServiceServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedClientServiceServer) GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error) {
+func (UnimplementedMessageServiceServer) GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
-func (UnimplementedClientServiceServer) GetAllOfType(context.Context, *GetAllOfTypeRequest) (*GetAllOfTypeResponse, error) {
+func (UnimplementedMessageServiceServer) GetAllOfType(context.Context, *GetAllOfTypeRequest) (*GetAllOfTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllOfType not implemented")
 }
-func (UnimplementedClientServiceServer) mustEmbedUnimplementedClientServiceServer() {}
+func (UnimplementedMessageServiceServer) SearchClientMessages(context.Context, *SearchClientMessagesRequest) (*SearchClientMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchClientMessages not implemented")
+}
+func (UnimplementedMessageServiceServer) GetMessageTypes(context.Context, *GetMessageTypesRequest) (*GetMessageTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessageTypes not implemented")
+}
+func (UnimplementedMessageServiceServer) mustEmbedUnimplementedMessageServiceServer() {}
 
-// UnsafeClientServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ClientServiceServer will
+// UnsafeMessageServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to MessageServiceServer will
 // result in compilation errors.
-type UnsafeClientServiceServer interface {
-	mustEmbedUnimplementedClientServiceServer()
+type UnsafeMessageServiceServer interface {
+	mustEmbedUnimplementedMessageServiceServer()
 }
 
-func RegisterClientServiceServer(s grpc.ServiceRegistrar, srv ClientServiceServer) {
-	s.RegisterService(&ClientService_ServiceDesc, srv)
+func RegisterMessageServiceServer(s grpc.ServiceRegistrar, srv MessageServiceServer) {
+	s.RegisterService(&MessageService_ServiceDesc, srv)
 }
 
-func _ClientService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientServiceServer).Create(ctx, in)
+		return srv.(MessageServiceServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/message.ClientService/Create",
+		FullMethod: "/message.MessageService/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).Create(ctx, req.(*CreateRequest))
+		return srv.(MessageServiceServer).Create(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientServiceServer).GetAll(ctx, in)
+		return srv.(MessageServiceServer).GetAll(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/message.ClientService/GetAll",
+		FullMethod: "/message.MessageService/GetAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).GetAll(ctx, req.(*GetAllRequest))
+		return srv.(MessageServiceServer).GetAll(ctx, req.(*GetAllRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientService_GetAllOfType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MessageService_GetAllOfType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllOfTypeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientServiceServer).GetAllOfType(ctx, in)
+		return srv.(MessageServiceServer).GetAllOfType(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/message.ClientService/GetAllOfType",
+		FullMethod: "/message.MessageService/GetAllOfType",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).GetAllOfType(ctx, req.(*GetAllOfTypeRequest))
+		return srv.(MessageServiceServer).GetAllOfType(ctx, req.(*GetAllOfTypeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ClientService_ServiceDesc is the grpc.ServiceDesc for ClientService service.
+func _MessageService_SearchClientMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchClientMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServiceServer).SearchClientMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/message.MessageService/SearchClientMessages",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServiceServer).SearchClientMessages(ctx, req.(*SearchClientMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageService_GetMessageTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessageTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServiceServer).GetMessageTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/message.MessageService/GetMessageTypes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServiceServer).GetMessageTypes(ctx, req.(*GetMessageTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// MessageService_ServiceDesc is the grpc.ServiceDesc for MessageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ClientService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "message.ClientService",
-	HandlerType: (*ClientServiceServer)(nil),
+var MessageService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "message.MessageService",
+	HandlerType: (*MessageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Create",
-			Handler:    _ClientService_Create_Handler,
+			Handler:    _MessageService_Create_Handler,
 		},
 		{
 			MethodName: "GetAll",
-			Handler:    _ClientService_GetAll_Handler,
+			Handler:    _MessageService_GetAll_Handler,
 		},
 		{
 			MethodName: "GetAllOfType",
-			Handler:    _ClientService_GetAllOfType_Handler,
+			Handler:    _MessageService_GetAllOfType_Handler,
+		},
+		{
+			MethodName: "SearchClientMessages",
+			Handler:    _MessageService_SearchClientMessages_Handler,
+		},
+		{
+			MethodName: "GetMessageTypes",
+			Handler:    _MessageService_GetMessageTypes_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

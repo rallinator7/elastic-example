@@ -184,3 +184,41 @@ export namespace GetResponse {
   }
 }
 
+export class GetAllRequest extends jspb.Message {
+  getTenantid(): string;
+  setTenantid(value: string): GetAllRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetAllRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetAllRequest): GetAllRequest.AsObject;
+  static serializeBinaryToWriter(message: GetAllRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetAllRequest;
+  static deserializeBinaryFromReader(message: GetAllRequest, reader: jspb.BinaryReader): GetAllRequest;
+}
+
+export namespace GetAllRequest {
+  export type AsObject = {
+    tenantid: string,
+  }
+}
+
+export class GetAllResponse extends jspb.Message {
+  getClientsList(): Array<Client>;
+  setClientsList(value: Array<Client>): GetAllResponse;
+  clearClientsList(): GetAllResponse;
+  addClients(value?: Client, index?: number): Client;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetAllResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetAllResponse): GetAllResponse.AsObject;
+  static serializeBinaryToWriter(message: GetAllResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetAllResponse;
+  static deserializeBinaryFromReader(message: GetAllResponse, reader: jspb.BinaryReader): GetAllResponse;
+}
+
+export namespace GetAllResponse {
+  export type AsObject = {
+    clientsList: Array<Client.AsObject>,
+  }
+}
+

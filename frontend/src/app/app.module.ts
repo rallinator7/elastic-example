@@ -18,6 +18,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { ClientViewComponent } from './dashboard/client-view/client-view.component';
 import { MessageViewComponent } from './dashboard/message-view/message-view.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import {MatDialogModule} from '@angular/material/dialog';
+import { CreateClientComponent } from './dashboard/client-view/create-client/create-client.component';
+import {MatStepperModule} from '@angular/material/stepper';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     TenantCreateComponent,
     DashboardComponent,
     ClientViewComponent,
-    MessageViewComponent
+    MessageViewComponent,
+    CreateClientComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +45,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatSidenavModule,
     MatToolbarModule,
     MatTooltipModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatStepperModule
   ],
   providers: [],
   bootstrap: [AppComponent]

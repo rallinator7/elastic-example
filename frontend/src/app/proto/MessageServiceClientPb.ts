@@ -16,7 +16,7 @@ import * as grpcWeb from 'grpc-web';
 import * as message_pb from './message_pb';
 
 
-export class ClientServiceClient {
+export class MessageServiceClient {
   client_: grpcWeb.AbstractClientBase;
   hostname_: string;
   credentials_: null | { [index: string]: string; };
@@ -61,7 +61,7 @@ export class ClientServiceClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/message.ClientService/Create',
+          '/message.MessageService/Create',
         request,
         metadata || {},
         this.methodInfoCreate,
@@ -69,7 +69,7 @@ export class ClientServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/message.ClientService/Create',
+      '/message.MessageService/Create',
     request,
     metadata || {},
     this.methodInfoCreate);
@@ -101,7 +101,7 @@ export class ClientServiceClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/message.ClientService/GetAll',
+          '/message.MessageService/GetAll',
         request,
         metadata || {},
         this.methodInfoGetAll,
@@ -109,7 +109,7 @@ export class ClientServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/message.ClientService/GetAll',
+      '/message.MessageService/GetAll',
     request,
     metadata || {},
     this.methodInfoGetAll);
@@ -141,7 +141,7 @@ export class ClientServiceClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/message.ClientService/GetAllOfType',
+          '/message.MessageService/GetAllOfType',
         request,
         metadata || {},
         this.methodInfoGetAllOfType,
@@ -149,10 +149,90 @@ export class ClientServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/message.ClientService/GetAllOfType',
+      '/message.MessageService/GetAllOfType',
     request,
     metadata || {},
     this.methodInfoGetAllOfType);
+  }
+
+  methodInfoSearchClientMessages = new grpcWeb.AbstractClientBase.MethodInfo(
+    message_pb.SearchClientMessagesResponse,
+    (request: message_pb.SearchClientMessagesRequest) => {
+      return request.serializeBinary();
+    },
+    message_pb.SearchClientMessagesResponse.deserializeBinary
+  );
+
+  searchClientMessages(
+    request: message_pb.SearchClientMessagesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<message_pb.SearchClientMessagesResponse>;
+
+  searchClientMessages(
+    request: message_pb.SearchClientMessagesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: message_pb.SearchClientMessagesResponse) => void): grpcWeb.ClientReadableStream<message_pb.SearchClientMessagesResponse>;
+
+  searchClientMessages(
+    request: message_pb.SearchClientMessagesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: message_pb.SearchClientMessagesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/message.MessageService/SearchClientMessages',
+        request,
+        metadata || {},
+        this.methodInfoSearchClientMessages,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/message.MessageService/SearchClientMessages',
+    request,
+    metadata || {},
+    this.methodInfoSearchClientMessages);
+  }
+
+  methodInfoGetMessageTypes = new grpcWeb.AbstractClientBase.MethodInfo(
+    message_pb.GetMessageTypesResponse,
+    (request: message_pb.GetMessageTypesRequest) => {
+      return request.serializeBinary();
+    },
+    message_pb.GetMessageTypesResponse.deserializeBinary
+  );
+
+  getMessageTypes(
+    request: message_pb.GetMessageTypesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<message_pb.GetMessageTypesResponse>;
+
+  getMessageTypes(
+    request: message_pb.GetMessageTypesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: message_pb.GetMessageTypesResponse) => void): grpcWeb.ClientReadableStream<message_pb.GetMessageTypesResponse>;
+
+  getMessageTypes(
+    request: message_pb.GetMessageTypesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: message_pb.GetMessageTypesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/message.MessageService/GetMessageTypes',
+        request,
+        metadata || {},
+        this.methodInfoGetMessageTypes,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/message.MessageService/GetMessageTypes',
+    request,
+    metadata || {},
+    this.methodInfoGetMessageTypes);
   }
 
 }

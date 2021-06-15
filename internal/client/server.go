@@ -60,7 +60,10 @@ func (s *Server) Create(ctx context.Context, req *CreateRequest) (*CreateRespons
 	if res.IsError() {
 		return nil, fmt.Errorf("error indexing tenant: %s", res.Status())
 	}
-	return nil, nil
+
+	return &CreateResponse{
+		Client: &client,
+	}, nil
 }
 
 func (s *Server) Get(ctx context.Context, req *GetRequest) (*GetResponse, error) {
@@ -121,6 +124,73 @@ func (s *Server) Get(ctx context.Context, req *GetRequest) (*GetResponse, error)
 
 	return &GetResponse{
 		Client: &client,
+	}, nil
+}
+
+func (s *Server) GetAll(ctx context.Context, req *GetAllRequest) (*GetAllResponse, error) {
+	var buf bytes.Buffer
+
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"match": map[string]interface{}{
+				"parent_id": map[string]interface{}{
+					"type": "client",
+					"id":   req.TenantId,
+				},
+			},
+		},
+	}
+
+	if err := json.NewEncoder(&buf).Encode(query); err != nil {
+		return nil, fmt.Errorf("Error encoding query: %s", err)
+	}
+
+	res, err := s.ElasticClient.Search(
+		s.ElasticClient.Search.WithContext(context.Background()),
+		s.ElasticClient.Search.WithIndex(s.Index),
+		s.ElasticClient.Search.WithBody(&buf),
+		s.ElasticClient.Search.WithTrackTotalHits(true),
+		s.ElasticClient.Search.WithPretty(),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Error getting response: %s", err)
+	}
+
+	if res.IsError() {
+		var e map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
+			return nil, fmt.Errorf("Error parsing the response body: %s", err)
+		} else {
+			return nil, fmt.Errorf("[%s] %s: %s",
+				res.Status(),
+				e["error"].(map[string]interface{})["type"],
+				e["error"].(map[string]interface{})["reason"],
+			)
+		}
+	}
+
+	var r map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+		return nil, fmt.Errorf("Error parsing the response body: %s", err)
+	}
+
+	var clientList []*Client
+
+	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
+		clientJson := hit.(map[string]interface{})["_source"].(map[string]interface{})
+
+		client := &Client{
+			Name:        clientJson["client_name"].(string),
+			PhoneNumber: clientJson["client_phone_number"].(string),
+			Address:     clientJson["client_address"].(string),
+			Id:          clientJson["client_id"].(string),
+		}
+
+		clientList = append(clientList, client)
+	}
+
+	return &GetAllResponse{
+		Clients: clientList,
 	}, nil
 }
 
