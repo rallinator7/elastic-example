@@ -2,8 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 import { ClientService } from "../../services/client.service";
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { Inject } from '@angular/core';
+import {ClientViewComponent} from "../client-view.component";
 
 @Component({
   selector: 'app-create-client',
@@ -20,7 +21,7 @@ export class CreateClientComponent implements OnInit {
   isLinear = true;
 
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder, private clientService: ClientService) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder, private clientService: ClientService,  public dialogRef: MatDialogRef<ClientViewComponent>,) {
     this.nameForm = this.formBuilder.group({
       name: [null, Validators.required]
     });
@@ -37,10 +38,7 @@ export class CreateClientComponent implements OnInit {
   }
 
   createClient(){
-    //
-    console.log("name: "+this.nameForm.value.name)
-    console.log("address: "+this.addressForm.value.address)
-    console.log("contact: "+this.contactForm.value.phoneNumber)
-    //this.clientService.createClient(this.createClientForm.value.name,this.createClientForm.value.address,this.createClientForm.value.phoneNumber, this.route.snapshot.params.id)
+    this.dialogRef.close();
+    this.clientService.createClient(this.nameForm.value.name,this.addressForm.value.address,this.contactForm.value.phoneNumber, this.data.tenantId)
   }
 }

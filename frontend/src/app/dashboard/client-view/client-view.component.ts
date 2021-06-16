@@ -1,11 +1,13 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {ClientServiceClient} from "../../proto/ClientServiceClientPb";
 import {ClientService} from "../services/client.service";
-import {EMPTY, Observable} from "rxjs";
 import {Client} from "../../proto/client_pb";
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {CreateClientComponent} from "./create-client/create-client.component";
+import {MatTableDataSource} from "@angular/material/table";
+import {newArray} from "@angular/compiler/src/util";
+import {Observable} from "rxjs";
+
 
 @Component({
   selector: 'app-client-view',
@@ -14,13 +16,12 @@ import {CreateClientComponent} from "./create-client/create-client.component";
 })
 
 export class ClientViewComponent implements OnInit {
-  clients: Observable<Client[]> = EMPTY;
+  displayedColumns: string[] = ['name', 'address', 'contact'];
 
   constructor(private route: ActivatedRoute, private clientService: ClientService, public dialog: MatDialog) {
-    //this.getAllClients()
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
   }
 
   openDialog(): void {
@@ -40,7 +41,7 @@ export class ClientViewComponent implements OnInit {
   getAllClients() {
     let tenantId: string = this.route.snapshot.params.id;
 
-    this.clients = this.clientService.getAllClients(tenantId)
+    //return this.clientService.getAllClients(tenantId)
+
   }
 }
-

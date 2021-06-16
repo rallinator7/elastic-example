@@ -132,11 +132,9 @@ func (s *Server) GetAll(ctx context.Context, req *GetAllRequest) (*GetAllRespons
 
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
-			"match": map[string]interface{}{
-				"parent_id": map[string]interface{}{
-					"type": "client",
-					"id":   req.TenantId,
-				},
+			"parent_id": map[string]interface{}{
+				"type": "client",
+				"id":   req.TenantId,
 			},
 		},
 	}
@@ -174,7 +172,7 @@ func (s *Server) GetAll(ctx context.Context, req *GetAllRequest) (*GetAllRespons
 		return nil, fmt.Errorf("Error parsing the response body: %s", err)
 	}
 
-	var clientList []*Client
+	clientList := []*Client{}
 
 	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
 		clientJson := hit.(map[string]interface{})["_source"].(map[string]interface{})

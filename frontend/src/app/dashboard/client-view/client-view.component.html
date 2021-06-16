@@ -1,5 +1,23 @@
-<ol>
-  <li>
-    <button mat-raised-button (click)="openDialog()">Pick one</button>
-  </li>
-</ol>
+<button mat-raised-button color="accent" (click)="openDialog()">New Client</button>
+<table mat-table   class="mat-elevation-z8">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let data"> {{ data.name  }} </td>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="address">
+    <th mat-header-cell *matHeaderCellDef> Address </th>
+    <td mat-cell *matCellDef="let client"> {{client.address}} </td>
+  </ng-container>
+
+  <!-- Weight Column -->
+  <ng-container matColumnDef="contact">
+    <th mat-header-cell *matHeaderCellDef> Contact </th>
+    <td mat-cell *matCellDef="let client"> {{client.phoneNumber}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+</table>
+
+

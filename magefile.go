@@ -225,16 +225,9 @@ func Fields() error {
 
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
-			"bool": map[string]interface{}{
-				"must": []map[string]interface{}{
-					{"parent_id": map[string]interface{}{
-						"type": "message",
-						"id":   "8895edb8-f0f3-4e85-88cb-588ab04a854b",
-					}},
-					{"match": map[string]interface{}{
-						"message_type": "scheduling",
-					}},
-				},
+			"parent_id": map[string]interface{}{
+				"type": "client",
+				"id":   "21264019-a379-40cb-a022-880028dd055d",
 			},
 		},
 	}
@@ -250,7 +243,6 @@ func Fields() error {
 		es.Search.WithTrackTotalHits(true),
 		es.Search.WithPretty(),
 	)
-
 	if err != nil {
 		return fmt.Errorf("Error getting response: %s", err)
 	}
@@ -258,7 +250,7 @@ func Fields() error {
 	if res.IsError() {
 		var e map[string]interface{}
 		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
-			return fmt.Errorf("error parsing the response body: %s", err)
+			return fmt.Errorf("Error parsing the response body: %s", err)
 		} else {
 			return fmt.Errorf("[%s] %s: %s",
 				res.Status(),
@@ -270,36 +262,15 @@ func Fields() error {
 
 	var r map[string]interface{}
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-		return fmt.Errorf("error parsing the response body: %s", err)
+		return fmt.Errorf("Error parsing the response body: %s", err)
 	}
-
-	var messageList []*Message
 
 	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
-		messageJson := hit.(map[string]interface{})["_source"].(map[string]interface{})
+		clientJson := hit.(map[string]interface{})["_source"].(map[string]interface{})
 
-		mf := messageJson["message_fields"].([]interface{})
+		fmt.Println(clientJson["client_name"].(string))
 
-		var fields []*Field
-		for _, f := range mf {
-			newField := Field{
-				Key:   f.(map[string]interface{})["Key"].(string),
-				Value: f.(map[string]interface{})["Value"].(string),
-			}
-
-			fields = append(fields, &newField)
-		}
-
-		message := Message{
-			Id:     messageJson["message_id"].(string),
-			Type:   messageJson["message_type"].(string),
-			Fields: fields,
-		}
-
-		messageList = append(messageList, &message)
 	}
-
-	fmt.Println(messageList[0].Type)
 
 	return nil
 }

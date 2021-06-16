@@ -8,7 +8,7 @@ import {
   NameSearchResponse,
   CreateRequest,
   CreateResponse,
-  Client, NameSearchResult, GetAllResponse
+  Client, NameSearchResult, GetAllResponse, GetAllRequest
 } from "../../proto/client_pb";
 
 @Injectable({
@@ -62,7 +62,7 @@ export class ClientService {
   getAllClients(tenantId: string): Observable<Client[]> {
     let results: Promise<Client[]>;
     results = new Promise((resolve, reject) => {
-      const req = new NameSearchRequest()
+      const req = new GetAllRequest()
       req.setTenantid(tenantId)
       this.clientService.getAll(req, null, (err, response: GetAllResponse) => {
         if (err) {
@@ -71,8 +71,9 @@ export class ClientService {
         resolve(response.getClientsList());
       });
     });
-    const observable = from(results);
-    return observable;
+
+
+    return from(results);
   }
 
   getClient(id: string): Observable<Client> {
